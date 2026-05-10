@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAPER-MILL OS | Integrated Command</title>
+    <title>PAPER-MILL OS | Supervisor Command</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <style>
@@ -14,193 +14,173 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; display: flex; }
 
-        /* --- LOGIN SYSTEM --- */
+        /* --- LOGIN & SIDEBAR --- */
         #loginOverlay { position: fixed; inset: 0; background: radial-gradient(circle at center, #1e293b, #020617); display: flex; align-items: center; justify-content: center; z-index: 10000; }
-        .login-card { background: rgba(15, 23, 42, 0.98); padding: 50px; border-radius: 35px; border: 1px solid rgba(255,255,255,0.1); text-align: center; width: 450px; }
-        .portal-btn { width: 100%; padding: 18px; margin: 10px 0; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; transition: 0.3s; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); }
-        .portal-btn:hover { background: var(--primary); color: #000; }
-
-        /* --- LAYOUT --- */
-        #sidebar { width: 300px; background: var(--sidebar); border-right: 1px solid rgba(255,255,255,0.1); padding: 30px; display: flex; flex-direction: column; }
+        .login-card { background: #0f172a; padding: 50px; border-radius: 30px; text-align: center; width: 400px; border: 1px solid rgba(255,255,255,0.1); }
+        #sidebar { width: 280px; background: var(--sidebar); border-right: 1px solid rgba(255,255,255,0.1); padding: 25px; display: flex; flex-direction: column; }
         main { flex: 1; padding: 40px; overflow-y: auto; }
-        .card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.08); padding: 25px; border-radius: 24px; margin-bottom: 25px; }
-        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+
+        /* --- UI COMPONENTS --- */
+        .portal-btn { width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 15px; font-weight: 700; cursor: pointer; transition: 0.3s; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); }
+        .portal-btn:hover { background: var(--primary); color: #000; }
+        .card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.08); padding: 20px; border-radius: 20px; margin-bottom: 20px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .hidden { display: none !important; }
-        .badge { padding: 5px 12px; border-radius: 10px; font-size: 0.7rem; font-weight: 800; }
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; }
 
-        /* --- MACHINE & TABLES --- */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th { text-align: left; color: #64748b; font-size: 0.75rem; padding: 15px; border-bottom: 1px solid #1e293b; }
-        td { padding: 18px; border-bottom: 1px solid #1e293b; font-size: 0.9rem; }
-        .m-card { border-left: 5px solid var(--primary); cursor: pointer; transition: 0.2s; }
-        .m-card:hover { background: rgba(255,255,255,0.05); }
-
-        /* --- MODAL --- */
-        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 10001; }
-        .modal-body { background: #0f172a; width: 600px; padding: 40px; border-radius: 30px; border: 1px solid var(--primary); }
+        /* --- MACHINE MODAL DEEP VIEW --- */
+        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 10001; }
+        .modal-body { background: #0f172a; width: 850px; height: 90vh; overflow-y: auto; padding: 40px; border-radius: 30px; border: 1px solid var(--primary); }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { text-align: left; color: #64748b; font-size: 0.75rem; padding: 12px; border-bottom: 1px solid #1e293b; }
+        td { padding: 12px; border-bottom: 1px solid #1e293b; font-size: 0.85rem; }
     </style>
 </head>
 <body>
 
 <div id="loginOverlay">
     <div class="login-card">
-        <h1 style="color:var(--primary); margin-bottom: 20px;">PAPER MILL OS</h1>
-        <button class="portal-btn" onclick="app.login('admin')">ADMIN (CEO) ACCESS</button>
+        <h2 style="color:var(--primary)">NEPAL PAPER OS</h2>
+        <button class="portal-btn" onclick="app.login('admin')">ADMIN ACCESS</button>
         <button class="portal-btn" onclick="app.login('supervisor')">SUPERVISOR PORTAL</button>
-        <button class="portal-btn" onclick="app.login('employee')">EMPLOYEE DASHBOARD</button>
     </div>
 </div>
 
 <div id="sidebar" class="hidden">
-    <div style="text-align: center; margin-bottom: 40px;">
-        <div style="width:70px; height:70px; background:var(--primary); border-radius:20px; margin:0 auto 15px; display:flex; align-items:center; justify-content:center;"><i class="fas fa-user-shield fa-2x" style="color:#000"></i></div>
-        <h3 id="roleLabel">Role Name</h3>
-    </div>
-    <div class="nav-item portal-btn" onclick="app.showSec('dash')">Overview</div>
-    <div id="nav-machines" class="nav-item portal-btn" onclick="app.showSec('machines')">Machines</div>
-    <div id="nav-staff" class="nav-item portal-btn" onclick="app.showSec('staff')">Employees</div>
-    <button class="portal-btn" style="margin-top:auto; color:var(--danger);" onclick="location.reload()">LOGOUT</button>
+    <h3 id="roleLabel" style="color:var(--primary); text-align:center; margin-bottom:30px;">ROLE</h3>
+    <div class="portal-btn" onclick="app.showSec('dash')">Overview</div>
+    <div class="portal-btn" onclick="app.showSec('machines')">Machine Intelligence</div>
+    <button class="portal-btn" style="margin-top:auto; color:var(--danger)" onclick="location.reload()">Logout</button>
 </div>
 
 <main id="mainContent" class="hidden">
-    
-    <!-- ADMIN VIEW -->
     <div id="sec-dash">
-        <div id="adminStats" class="grid-4 hidden">
-            <div class="card"><h4>Revenue</h4><h2 style="color:var(--success)">Rs. 4.2M</h2></div>
-            <div class="card"><h4>Net Profit</h4><h2>Rs. 1.1M</h2></div>
-            <div class="card"><h4>Active Staff</h4><h2>124</h2></div>
-            <div class="card"><h4>Efficiency</h4><h2 style="color:var(--warning)">89%</h2></div>
-        </div>
-
-        <div id="empPersonal" class="card hidden">
-            <h2>Welcome, <span id="empName">User</span></h2>
-            <p style="color:var(--primary); margin-top:10px;">Your Machine: <b id="empMac">Cutter-09</b></p>
-            <p>Today's Shift: 06:00 AM - 02:00 PM</p>
-        </div>
-
-        <div class="card" id="aiBox">
-            <h3 style="color:var(--primary)"><i class="fas fa-brain"></i> Strategic AI Suggestion</h3>
-            <p id="aiText" style="margin-top:10px; line-height:1.6;">Analyzing factory data...</p>
+        <h2 style="margin-bottom:20px;">Strategic Insights</h2>
+        <div class="card" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(139, 92, 246, 0.1));">
+            <h3><i class="fas fa-brain"></i> AI Suggestion</h3>
+            <p id="aiHint" style="margin-top:10px; color:#cbd5e1;">Loading live factory data...</p>
         </div>
     </div>
 
-    <!-- MACHINE LIST -->
     <div id="sec-machines" class="hidden">
-        <h2>Factory Assets</h2>
-        <div class="grid-4" id="machineGrid" style="margin-top:20px;"></div>
+        <h2>Live Machine Assets</h2>
+        <div class="grid-3" id="machineGrid" style="margin-top:20px;"></div>
     </div>
-
-    <!-- STAFF LIST -->
-    <div id="sec-staff" class="hidden">
-        <h2>Workforce Registry</h2>
-        <div class="card">
-            <table>
-                <thead><tr><th>Name</th><th>Role</th><th>Status</th><th>Action</th></tr></thead>
-                <tbody id="staffTable"></tbody>
-            </table>
-        </div>
-    </div>
-
 </main>
 
+<!-- MACHINE DEEP-DIVE MODAL -->
 <div id="modal">
-    <div class="modal-body" id="modalContent"></div>
+    <div class="modal-body">
+        <div style="display:flex; justify-content:space-between; align-items:start;">
+            <div>
+                <h1 id="detName" style="color:var(--primary)">Machine Name</h1>
+                <p id="detId" style="color:#64748b; font-size:0.8rem;">ID: MAC-000</p>
+            </div>
+            <button class="badge" style="background:var(--danger); border:none; cursor:pointer; color:white; padding:10px 20px;" onclick="app.closeModal()">X CLOSE</button>
+        </div>
+
+        <div class="grid-3" style="margin-top:30px;">
+            <div class="card">
+                <p style="color:#64748b; font-size:0.8rem;">Current Production</p>
+                <h2 id="detOut">0 Tons</h2>
+                <p style="color:var(--success); font-size:0.7rem;">Capacity: <span id="detCap">0</span> T/Day</p>
+            </div>
+            <div class="card">
+                <p style="color:#64748b; font-size:0.8rem;">Raw Materials Used</p>
+                <p id="detRaw" style="font-size:0.85rem; margin-top:5px; line-height:1.5;"></p>
+            </div>
+            <div class="card">
+                <p style="color:#64748b; font-size:0.8rem;">Power & Health</p>
+                <h2 id="detHealth" style="color:var(--success)">100%</h2>
+                <p id="detPower" style="font-size:0.7rem;">0 kWh</p>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:20px;">
+            <div class="card">
+                <h3><i class="fas fa-users"></i> Manpower Allocation</h3>
+                <table id="manpowerTable">
+                    <thead><tr><th>Name</th><th>Role</th><th>Shift</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-history"></i> Past Records (24h)</h3>
+                <div id="detHistory" style="font-size:0.8rem; margin-top:10px; line-height:2;"></div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
     const db = {
         machines: [
-            { id:1, name: "Heavy Press X1", status: "Optimal", health: 98, out: "42 Tons", power: "1.2k kWh", supervisor: "Rajesh Hamal" },
-            { id:2, name: "Cutter Alpha-09", status: "Warning", health: 42, out: "12 Tons", power: "0.8k kWh", supervisor: "Suman KC" }
-        ],
-        staff: [
-            { id:"EMP-101", name: "Swastik Parajuli", role: "Sr. Operator", mac: "Cutter Alpha-09", sal: "Rs. 65k", perf: "4.8/5", phone: "986..." },
-            { id:"SUP-001", name: "Rajesh Hamal", role: "Production Lead", mac: "Heavy Press X1", sal: "Rs. 145k", perf: "5/5", phone: "984..." }
+            { 
+                id: "MAC-101", name: "Heavy Press X1", status: "Running", health: 96, 
+                out: "38.5 Tons", cap: "50", power: "1,450 kWh",
+                raw: "• Pulp: 42T <br> • Chemical A: 200L <br> • Water: 5k L",
+                crew: [
+                    {n: "Swastik Parajuli", r: "Sr. Operator", s: "Morning"},
+                    {n: "Ram Prasad", r: "Helper", s: "Morning"},
+                    {n: "Sita Kumari", r: "Technician", s: "On-Call"}
+                ],
+                history: "• 08:00 AM: Production Start <br> • 11:30 AM: Minor Roller Cleaning <br> • 02:00 PM: Shift Handover"
+            },
+            { 
+                id: "MAC-202", name: "Cutter Alpha-09", status: "Idle", health: 48, 
+                out: "12 Tons", cap: "30", power: "600 kWh",
+                raw: "• Paper Rolls: 15T <br> • Blade Coolant: 20L",
+                crew: [
+                    {n: "Binod Rai", r: "Operator", s: "Night"}
+                ],
+                history: "• 09:00 AM: Blade Jam Reported <br> • 10:00 AM: Maintenance Request Sent"
+            }
         ]
     };
 
     const app = {
-        currentRole: '',
-
         login: (role) => {
-            app.currentRole = role;
             document.getElementById('loginOverlay').classList.add('hidden');
             document.getElementById('sidebar').classList.remove('hidden');
             document.getElementById('mainContent').classList.remove('hidden');
             document.getElementById('roleLabel').innerText = role.toUpperCase();
-
-            if(role === 'admin') {
-                document.getElementById('adminStats').classList.remove('hidden');
-                document.getElementById('aiText').innerText = "Export demand is high. Increase production on Unit X1 by 15% to maximize profit.";
-            } else if(role === 'employee') {
-                document.getElementById('empPersonal').classList.remove('hidden');
-                document.getElementById('nav-staff').classList.add('hidden');
-                document.getElementById('nav-machines').classList.add('hidden');
-                document.getElementById('empName').innerText = db.staff[0].name;
-                document.getElementById('aiText').innerText = "Safety Alert: Wear protective gear. Machine Cutter Alpha-09 shows high vibration.";
-            } else {
-                document.getElementById('nav-staff').classList.add('hidden');
-                document.getElementById('aiText').innerText = "Team Performance is stable. Next maintenance cycle starts in 3 days.";
-            }
+            document.getElementById('aiHint').innerText = role === 'admin' ? 
+                "Export demand for A4 is rising. Divert materials to Press X1." : 
+                "Machine Alpha-09 needs a blade check before the next shift starts.";
             app.renderMachines();
-            app.renderStaff();
         },
 
         showSec: (id) => {
-            ['sec-dash', 'sec-machines', 'sec-staff'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            ['sec-dash', 'sec-machines'].forEach(s => document.getElementById(s).classList.add('hidden'));
             document.getElementById('sec-' + id).classList.remove('hidden');
         },
 
         renderMachines: () => {
             const grid = document.getElementById('machineGrid');
             grid.innerHTML = db.machines.map(m => `
-                <div class="card m-card" onclick="app.viewMachine(${m.id})">
-                    <h4>${m.name}</h4>
+                <div class="card" onclick="app.viewDetail('${m.id}')" style="cursor:pointer; border-left: 5px solid ${m.health > 50 ? 'var(--success)':'var(--danger)'}">
+                    <h3>${m.name}</h3>
                     <p style="font-size:0.8rem; color:#64748b;">Health: ${m.health}%</p>
-                    <span class="badge" style="background:${m.health < 50 ? 'var(--danger)':'var(--success)'}">${m.status}</span>
+                    <span class="badge" style="background:${m.status==='Running'?'var(--success)':'var(--warning)'}">${m.status}</span>
                 </div>
             `).join('');
         },
 
-        renderStaff: () => {
-            const table = document.getElementById('staffTable');
-            table.innerHTML = db.staff.map(s => `
-                <tr>
-                    <td>${s.name}</td>
-                    <td>${s.role}</td>
-                    <td><span class="badge" style="background:var(--success)">Active</span></td>
-                    <td><button class="portal-btn" style="padding:5px 15px; width:auto;" onclick="app.viewStaff('${s.id}')">GOD-VIEW</button></td>
-                </tr>
-            `).join('');
-        },
-
-        viewMachine: (id) => {
+        viewDetail: (id) => {
             const m = db.machines.find(x => x.id === id);
-            document.getElementById('modalContent').innerHTML = `
-                <h2 style="color:var(--primary)">${m.name}</h2>
-                <hr style="opacity:0.1; margin:20px 0;">
-                <p><b>Supervisor:</b> ${m.supervisor}</p>
-                <p><b>Daily Output:</b> ${m.out}</p>
-                <p><b>Power Consumed:</b> ${m.power}</p>
-                <p><b>Health Score:</b> ${m.health}%</p>
-                <button class="portal-btn" style="background:var(--danger); margin-top:20px;" onclick="app.closeModal()">Close</button>
-            `;
-            document.getElementById('modal').style.display = 'flex';
-        },
+            document.getElementById('detName').innerText = m.name;
+            document.getElementById('detId').innerText = "Asset ID: " + m.id;
+            document.getElementById('detOut').innerText = m.out;
+            document.getElementById('detCap').innerText = m.cap;
+            document.getElementById('detRaw').innerHTML = m.raw;
+            document.getElementById('detHealth').innerText = m.health + "%";
+            document.getElementById('detHealth').style.color = m.health > 50 ? 'var(--success)' : 'var(--danger)';
+            document.getElementById('detPower').innerText = "Consumption: " + m.power;
+            document.getElementById('detHistory').innerHTML = m.history;
 
-        viewStaff: (id) => {
-            const s = db.staff.find(x => x.id === id);
-            document.getElementById('modalContent').innerHTML = `
-                <h2 style="color:var(--primary)">Profile: ${s.name}</h2>
-                <hr style="opacity:0.1; margin:20px 0;">
-                <p><b>Role:</b> ${s.role}</p>
-                <p><b>Assigned Machine:</b> ${s.mac}</p>
-                <p><b>Salary:</b> ${s.sal}</p>
-                <p><b>Performance:</b> ${s.perf}</p>
-                <p><b>Contact:</b> ${s.phone}</p>
-                <button class="portal-btn" style="background:var(--danger); margin-top:20px;" onclick="app.closeModal()">Close</button>
-            `;
+            const tbody = document.querySelector('#manpowerTable tbody');
+            tbody.innerHTML = m.crew.map(c => `<tr><td>${c.n}</td><td>${c.r}</td><td>${c.s}</td></tr>`).join('');
+
             document.getElementById('modal').style.display = 'flex';
         },
 
