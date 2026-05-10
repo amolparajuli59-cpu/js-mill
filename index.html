@@ -1,30 +1,168 @@
--- 1. Machines Table
-CREATE TABLE machines (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
-    required_manpower INTEGER, -- Standard manpower needed
-    raw_material_type VARCHAR(100),
-    status VARCHAR(50) DEFAULT 'operational' -- operational, broken, maintenance
-);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nepal Paper Industries - Management System</title>
+    <style>
+        :root { --primary: #2c3e50; --secondary: #27ae60; --accent: #e67e22; --light: #f4f7f6; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; }
+        nav { background: var(--primary); color: white; padding: 1rem; display: flex; justify-content: space-between; }
+        .container { padding: 20px; max-width: 1200px; margin: auto; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .hidden { display: none; }
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; background: var(--secondary); color: white; transition: 0.3s; }
+        button:hover { opacity: 0.8; }
+        input, select { padding: 10px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: #eee; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .status-broken { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
 
--- 2. Weekly Production Logs (For Supervisor Input)
-CREATE TABLE production_logs (
-    id SERIAL PRIMARY KEY,
-    machine_id INTEGER REFERENCES machines(id),
-    week_ending_date DATE,
-    actual_manpower_used INTEGER,
-    total_produced_units INTEGER,
-    raw_material_consumed FLOAT,
-    downtime_hours FLOAT
-);
+<nav>
+    <div id="nav-title">Paper Mill System</div>
+    <button id="logoutBtn" class="hidden" onclick="logout()">Logout</button>
+</nav>
 
--- 3. Users Table (Admin, Supervisor, Employee)
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50),
-    password_hash TEXT,
-    role VARCHAR(20), -- 'admin', 'supervisor', 'employee'
-    assigned_machine_id INTEGER REFERENCES machines(id),
-    salary DECIMAL(10, 2),
-    work_schedule JSONB -- Stores hours/days
-);
+<div class="container">
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="card">
+        <h2>Select Login Portal</h2>
+        <button onclick="login('employee')">Employee Login</button>
+        <button onclick="login('supervisor')" style="background: var(--accent);">Supervisor Login</button>
+        <button onclick="login('admin')" style="background: var(--primary);">Admin Login</button>
+    </div>
+
+    <!-- EMPLOYEE DASHBOARD -->
+    <div id="employeeDashboard" class="hidden">
+        <div class="card">
+            <h2>My Work Schedule</h2>
+            <p><strong>Machine:</strong> Machine-04 (Newsprint)</p>
+            <p><strong>Shift:</strong> 06:00 AM - 02:00 PM</p>
+            <p><strong>Salary Status:</strong> Processed</p>
+        </div>
+    </div>
+
+    <!-- SUPERVISOR DASHBOARD -->
+    <div id="supervisorDashboard" class="hidden">
+        <div class="grid">
+            <div class="card">
+                <h3>Weekly Production Entry</h3>
+                <label>Select Machine</label>
+                <select id="superMachine">
+                    <option value="Machine A4-1">Machine A4-1</option>
+                    <option value="Machine News-1">Machine News-1</option>
+                </select>
+                <input type="number" id="prodInput" placeholder="Units Produced">
+                <input type="number" id="manInput" placeholder="Manpower Used">
+                <button onclick="saveProduction()">Submit Week Data</button>
+            </div>
+            <div class="card">
+                <h3>Comparison (vs Last Week)</h3>
+                <div id="comparisonResult">Enter data to see comparison...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div id="adminDashboard" class="hidden">
+        <div class="grid">
+            <div class="card" style="border-top: 5px solid var(--secondary);">
+                <h3>Total Net Profit</h3>
+                <h2 id="totalProfit">$0.00</h2>
+            </div>
+            <div class="card" style="border-top: 5px solid var(--accent);">
+                <h3>Storage Status</h3>
+                <p>A4 Paper: 5,000 Reams</p>
+                <p>Newsprint: 120 Rolls</p>
+            </div>
+        </div>
+        <div class="card">
+            <h3>Machine Health & Repairs</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Machine</th>
+                        <th>Condition</th>
+                        <th>Downtime (Hours)</th>
+                        <th>Manpower Required</th>
+                    </tr>
+                </thead>
+                <tbody id="machineTable">
+                    <tr><td>A4-1</td><td>Operational</td><td>0</td><td>5</td></tr>
+                    <tr><td>News-1</td><td class="status-broken">Broken</td><td>14</td><td>8</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- LOGIN LOGIC ---
+    function login(role) {
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('logoutBtn').classList.remove('hidden');
+        
+        if(role === 'employee') document.getElementById('employeeDashboard').classList.remove('hidden');
+        if(role === 'supervisor') document.getElementById('supervisorDashboard').classList.remove('hidden');
+        if(role === 'admin') {
+            document.getElementById('adminDashboard').classList.remove('hidden');
+            calculateAdminStats();
+        }
+    }
+
+    function logout() {
+        location.reload();
+    }
+
+    // --- SUPERVISOR LOGIC (Data Persistence) ---
+    function saveProduction() {
+        const machine = document.getElementById('superMachine').value;
+        const prod = parseInt(document.getElementById('prodInput').value);
+        const man = parseInt(document.getElementById('manInput').value);
+
+        // Get history from LocalStorage
+        let history = JSON.parse(localStorage.getItem('prodHistory')) || [];
+        
+        // Save new entry
+        const newEntry = { machine, prod, man, date: new Date().toLocaleDateString() };
+        history.push(newEntry);
+        localStorage.setItem('prodHistory', JSON.stringify(history));
+
+        alert("Data Saved Successfully!");
+        showComparison(machine, prod);
+    }
+
+    function showComparison(currentMachine, currentProd) {
+        let history = JSON.parse(localStorage.getItem('prodHistory')) || [];
+        // Find the previous entry for this same machine
+        const machineHistory = history.filter(h => h.machine === currentMachine);
+        
+        if (machineHistory.length > 1) {
+            const lastWeek = machineHistory[machineHistory.length - 2].prod;
+            const diff = currentProd - lastWeek;
+            const color = diff >= 0 ? 'green' : 'red';
+            document.getElementById('comparisonResult').innerHTML = `
+                <p>Last Week: ${lastWeek} units</p>
+                <p>Difference: <b style="color:${color}">${diff > 0 ? '+' : ''}${diff} units</b></p>
+            `;
+        } else {
+            document.getElementById('comparisonResult').innerHTML = "First week recorded. Need more data for comparison.";
+        }
+    }
+
+    // --- ADMIN LOGIC ---
+    function calculateAdminStats() {
+        let history = JSON.parse(localStorage.getItem('prodHistory')) || [];
+        let totalOutput = history.reduce((sum, item) => sum + item.prod, 0);
+        let profit = totalOutput * 0.50; // Assume $0.50 profit per unit
+        document.getElementById('totalProfit').innerText = "$" + profit.toLocaleString();
+    }
+</script>
+
+</body>
+</html>
