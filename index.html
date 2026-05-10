@@ -1,0 +1,30 @@
+-- 1. Machines Table
+CREATE TABLE machines (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    required_manpower INTEGER, -- Standard manpower needed
+    raw_material_type VARCHAR(100),
+    status VARCHAR(50) DEFAULT 'operational' -- operational, broken, maintenance
+);
+
+-- 2. Weekly Production Logs (For Supervisor Input)
+CREATE TABLE production_logs (
+    id SERIAL PRIMARY KEY,
+    machine_id INTEGER REFERENCES machines(id),
+    week_ending_date DATE,
+    actual_manpower_used INTEGER,
+    total_produced_units INTEGER,
+    raw_material_consumed FLOAT,
+    downtime_hours FLOAT
+);
+
+-- 3. Users Table (Admin, Supervisor, Employee)
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50),
+    password_hash TEXT,
+    role VARCHAR(20), -- 'admin', 'supervisor', 'employee'
+    assigned_machine_id INTEGER REFERENCES machines(id),
+    salary DECIMAL(10, 2),
+    work_schedule JSONB -- Stores hours/days
+);
