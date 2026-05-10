@@ -3,166 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nepal Paper Industries - Management System</title>
+    <title>PULP & PAPER PRO | Industrial Management</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <style>
-        :root { --primary: #2c3e50; --secondary: #27ae60; --accent: #e67e22; --light: #f4f7f6; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; }
-        nav { background: var(--primary); color: white; padding: 1rem; display: flex; justify-content: space-between; }
-        .container { padding: 20px; max-width: 1200px; margin: auto; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        :root {
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --primary: #38bdf8;
+            --secondary: #818cf8;
+            --accent: #fbbf24;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --text: #f1f5f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body { 
+            background: radial-gradient(circle at top left, #1e293b, #0f172a);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- Header & Navigation --- */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            letter-spacing: -1px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        header p { color: #94a3b8; margin-top: 10px; font-weight: 300; }
+
+        .container { max-width: 1200px; margin: auto; padding: 20px; }
+
+        /* --- Centered Login Portal --- */
+        #loginPage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 60vh;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+
+        .login-grid {
+            display: grid;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .login-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.05);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .login-btn:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+            color: var(--bg);
+        }
+
+        /* --- Dashboard UI --- */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-val { font-size: 2rem; font-weight: 700; margin: 10px 0; color: var(--primary); }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .active { background: rgba(34, 197, 94, 0.2); color: var(--success); }
+        .inactive { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+
+        /* --- Forms & Inputs --- */
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+        }
+
         .hidden { display: none; }
-        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; background: var(--secondary); color: white; transition: 0.3s; }
-        button:hover { opacity: 0.8; }
-        input, select { padding: 10px; margin: 5px 0; width: 100%; box-sizing: border-box; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        th { background: #eee; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .status-broken { color: red; font-weight: bold; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { text-align: left; color: #94a3b8; font-weight: 500; padding: 10px; }
+        td { padding: 15px 10px; border-top: 1px solid rgba(255,255,255,0.05); }
+
+        .logout-btn { background: var(--danger); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<nav>
-    <div id="nav-title">Paper Mill System</div>
-    <button id="logoutBtn" class="hidden" onclick="logout()">Logout</button>
-</nav>
+<header>
+    <h1><i class="fas fa-scroll"></i> NEPAL PAPER MILLS</h1>
+    <p>Advanced Industrial Management System v2.0</p>
+</header>
 
 <div class="container">
-    <!-- LOGIN PAGE -->
-    <div id="loginPage" class="card">
-        <h2>Select Login Portal</h2>
-        <button onclick="login('employee')">Employee Login</button>
-        <button onclick="login('supervisor')" style="background: var(--accent);">Supervisor Login</button>
-        <button onclick="login('admin')" style="background: var(--primary);">Admin Login</button>
-    </div>
-
-    <!-- EMPLOYEE DASHBOARD -->
-    <div id="employeeDashboard" class="hidden">
-        <div class="card">
-            <h2>My Work Schedule</h2>
-            <p><strong>Machine:</strong> Machine-04 (Newsprint)</p>
-            <p><strong>Shift:</strong> 06:00 AM - 02:00 PM</p>
-            <p><strong>Salary Status:</strong> Processed</p>
-        </div>
-    </div>
-
-    <!-- SUPERVISOR DASHBOARD -->
-    <div id="supervisorDashboard" class="hidden">
-        <div class="grid">
-            <div class="card">
-                <h3>Weekly Production Entry</h3>
-                <label>Select Machine</label>
-                <select id="superMachine">
-                    <option value="Machine A4-1">Machine A4-1</option>
-                    <option value="Machine News-1">Machine News-1</option>
-                </select>
-                <input type="number" id="prodInput" placeholder="Units Produced">
-                <input type="number" id="manInput" placeholder="Manpower Used">
-                <button onclick="saveProduction()">Submit Week Data</button>
-            </div>
-            <div class="card">
-                <h3>Comparison (vs Last Week)</h3>
-                <div id="comparisonResult">Enter data to see comparison...</div>
+    
+    <!-- CENTERED LOGIN -->
+    <div id="loginPage">
+        <div class="login-card">
+            <i class="fas fa-shield-halved fa-3x" style="color: var(--primary)"></i>
+            <h2 style="margin-top:15px">Secure Access Portal</h2>
+            <div class="login-grid">
+                <button class="login-btn" onclick="showRole('employee')"><i class="fas fa-user"></i> Employee Portal</button>
+                <button class="login-btn" onclick="showRole('supervisor')"><i class="fas fa-user-tie"></i> Supervisor Dashboard</button>
+                <button class="login-btn" onclick="showRole('admin')"><i class="fas fa-user-gear"></i> Admin Command Center</button>
             </div>
         </div>
     </div>
 
-    <!-- ADMIN DASHBOARD -->
-    <div id="adminDashboard" class="hidden">
-        <div class="grid">
-            <div class="card" style="border-top: 5px solid var(--secondary);">
-                <h3>Total Net Profit</h3>
-                <h2 id="totalProfit">$0.00</h2>
-            </div>
-            <div class="card" style="border-top: 5px solid var(--accent);">
-                <h3>Storage Status</h3>
-                <p>A4 Paper: 5,000 Reams</p>
-                <p>Newsprint: 120 Rolls</p>
+    <!-- MAIN DASHBOARD AREA -->
+    <div id="mainDashboard" class="hidden">
+        <div class="dashboard-header">
+            <h2 id="roleTitle">Dashboard</h2>
+            <button class="logout-btn" onclick="location.reload()">Log Out</button>
+        </div>
+
+        <!-- 1. EMPLOYEE VIEW -->
+        <div id="employeeView" class="hidden">
+            <div class="grid">
+                <div class="card">
+                    <h3>My Assignment</h3>
+                    <div class="stat-val">Machine #08</div>
+                    <p><i class="far fa-clock"></i> 8 Hour Shift (Morning)</p>
+                    <p style="margin-top:10px">Status: <span class="status-badge active">ON DUTY</span></p>
+                </div>
+                <div class="card">
+                    <h3>My Wallet</h3>
+                    <div class="stat-val">Rs. 45,000</div>
+                    <p>Current Month Salary</p>
+                    <button style="margin-top:15px; width:100%; background:var(--primary); border:none; padding:10px; border-radius:5px">View Payslip</button>
+                </div>
             </div>
         </div>
-        <div class="card">
-            <h3>Machine Health & Repairs</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Machine</th>
-                        <th>Condition</th>
-                        <th>Downtime (Hours)</th>
-                        <th>Manpower Required</th>
-                    </tr>
-                </thead>
-                <tbody id="machineTable">
-                    <tr><td>A4-1</td><td>Operational</td><td>0</td><td>5</td></tr>
-                    <tr><td>News-1</td><td class="status-broken">Broken</td><td>14</td><td>8</td></tr>
-                </tbody>
-            </table>
+
+        <!-- 2. SUPERVISOR VIEW -->
+        <div id="supervisorView" class="hidden">
+            <div class="grid">
+                <div class="card">
+                    <h3>Weekly Data Input</h3>
+                    <select id="sMachine"><option>Press Machine A1</option><option>Cutting Unit B2</option></select>
+                    <input type="number" id="sProd" placeholder="Total Production (Kg)">
+                    <input type="number" id="sMan" placeholder="Manpower Used">
+                    <button onclick="calculateComparison()" style="width:100%; background:var(--success); color:white; border:none; padding:12px; border-radius:8px; margin-top:10px">Submit & Compare</button>
+                </div>
+                <div class="card">
+                    <h3>Production Efficiency</h3>
+                    <div id="compArea">
+                        <p>Efficiency this week vs last week:</p>
+                        <div class="stat-val" id="diffVal">--</div>
+                        <p id="compText">Select machine and submit to see results</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="margin-top:20px">
+                <h3>Machine Status Monitoring</h3>
+                <table>
+                    <thead><tr><th>Machine Name</th><th>Status</th><th>Raw Material</th><th>Operator</th></tr></thead>
+                    <tbody>
+                        <tr><td>Press A1</td><td><span class="status-badge active">ACTIVE</span></td><td>90%</td><td>Suresh K.</td></tr>
+                        <tr><td>Cutting B2</td><td><span class="status-badge inactive">STOPPED</span></td><td>10%</td><td>--</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
+        <!-- 3. ADMIN VIEW -->
+        <div id="adminView" class="hidden">
+            <div class="grid">
+                <div class="card">
+                    <h3>Weekly Net Profit</h3>
+                    <div class="stat-val" style="color:var(--success)">Rs. 1,250,000</div>
+                    <p>Total Sales: 4.5M | Expenses: 3.25M</p>
+                </div>
+                <div class="card">
+                    <h3>Storage/Warehouse</h3>
+                    <p>A4 Paper: 450 Bundles</p>
+                    <p>Newsprint: 210 Rolls</p>
+                    <div style="background:#334155; height:8px; border-radius:5px; margin-top:10px">
+                        <div style="background:var(--accent); width:75%; height:100%; border-radius:5px"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Maintenance Alert</h3>
+                    <p class="status-badge inactive" style="display:inline-block">Machine #05 Broken</p>
+                    <p style="margin-top:10px">Down for: 14 Hours</p>
+                </div>
+            </div>
+            <div class="card" style="margin-top:20px">
+                <h3>Global Workforce Record</h3>
+                <table>
+                    <thead><tr><th>Employee Name</th><th>Assigned Unit</th><th>Work Hours</th><th>Performance</th></tr></thead>
+                    <tbody>
+                        <tr><td>Rajesh Hamal</td><td>Section A</td><td>48h / Week</td><td>Excellent</td></tr>
+                        <tr><td>Nikhil Upreti</td><td>Section B</td><td>40h / Week</td><td>Average</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 </div>
 
 <script>
-    // --- LOGIN LOGIC ---
-    function login(role) {
+    function showRole(role) {
         document.getElementById('loginPage').classList.add('hidden');
-        document.getElementById('logoutBtn').classList.remove('hidden');
+        document.getElementById('mainDashboard').classList.remove('hidden');
         
-        if(role === 'employee') document.getElementById('employeeDashboard').classList.remove('hidden');
-        if(role === 'supervisor') document.getElementById('supervisorDashboard').classList.remove('hidden');
-        if(role === 'admin') {
-            document.getElementById('adminDashboard').classList.remove('hidden');
-            calculateAdminStats();
-        }
+        // Reset views
+        document.getElementById('employeeView').classList.add('hidden');
+        document.getElementById('supervisorView').classList.add('hidden');
+        document.getElementById('adminView').classList.add('hidden');
+
+        document.getElementById('roleTitle').innerText = role.toUpperCase() + " CONTROL PANEL";
+
+        if(role === 'employee') document.getElementById('employeeView').classList.remove('hidden');
+        if(role === 'supervisor') document.getElementById('supervisorView').classList.remove('hidden');
+        if(role === 'admin') document.getElementById('adminView').classList.remove('hidden');
     }
 
-    function logout() {
-        location.reload();
-    }
-
-    // --- SUPERVISOR LOGIC (Data Persistence) ---
-    function saveProduction() {
-        const machine = document.getElementById('superMachine').value;
-        const prod = parseInt(document.getElementById('prodInput').value);
-        const man = parseInt(document.getElementById('manInput').value);
-
-        // Get history from LocalStorage
-        let history = JSON.parse(localStorage.getItem('prodHistory')) || [];
+    function calculateComparison() {
+        const prod = document.getElementById('sProd').value;
+        if(!prod) return alert("Please enter production value");
         
-        // Save new entry
-        const newEntry = { machine, prod, man, date: new Date().toLocaleDateString() };
-        history.push(newEntry);
-        localStorage.setItem('prodHistory', JSON.stringify(history));
-
-        alert("Data Saved Successfully!");
-        showComparison(machine, prod);
-    }
-
-    function showComparison(currentMachine, currentProd) {
-        let history = JSON.parse(localStorage.getItem('prodHistory')) || [];
-        // Find the previous entry for this same machine
-        const machineHistory = history.filter(h => h.machine === currentMachine);
+        // Mock comparison logic
+        const lastWeek = 500; // Mock data
+        const diff = prod - lastWeek;
+        const percent = ((diff / lastWeek) * 100).toFixed(1);
         
-        if (machineHistory.length > 1) {
-            const lastWeek = machineHistory[machineHistory.length - 2].prod;
-            const diff = currentProd - lastWeek;
-            const color = diff >= 0 ? 'green' : 'red';
-            document.getElementById('comparisonResult').innerHTML = `
-                <p>Last Week: ${lastWeek} units</p>
-                <p>Difference: <b style="color:${color}">${diff > 0 ? '+' : ''}${diff} units</b></p>
-            `;
-        } else {
-            document.getElementById('comparisonResult').innerHTML = "First week recorded. Need more data for comparison.";
-        }
-    }
-
-    // --- ADMIN LOGIC ---
-    function calculateAdminStats() {
-        let history = JSON.parse(localStorage.getItem('prodHistory')) || [];
-        let totalOutput = history.reduce((sum, item) => sum + item.prod, 0);
-        let profit = totalOutput * 0.50; // Assume $0.50 profit per unit
-        document.getElementById('totalProfit').innerText = "$" + profit.toLocaleString();
+        document.getElementById('diffVal').innerText = (diff >= 0 ? "+" : "") + percent + "%";
+        document.getElementById('diffVal').style.color = diff >= 0 ? "var(--success)" : "var(--danger)";
+        document.getElementById('compText').innerText = diff >= 0 ? "Performance is higher than last week!" : "Performance dropped. Check raw materials.";
     }
 </script>
-
 </body>
 </html>
